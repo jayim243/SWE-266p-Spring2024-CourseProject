@@ -1,9 +1,14 @@
 import {} from "./utils";
 
-const Bank = ({ title, leftButton, rightButton, mainContent }) => {
+const Bank = ({ title, input, button, callout }) => {
   return (
     <div className="bank-panel">
-      <div>placeholder</div>
+      <p className="bank-panel-title">{title}</p>
+
+      {input}
+      {button}
+
+      {callout}
     </div>
   );
 };

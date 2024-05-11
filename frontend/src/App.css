@@ -20,3 +20,26 @@ h1 {
   margin: 20px 0;
   font-size: 32px;
 }
+
+.panel-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin: 40px 0;
+}
+
+.bank {
+  text-align: center;
+}
+
+.bank-panel {
+  width: 35%;
+  padding: 28px;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.bank-panel-title {
+  margin: 20px 0;
+  font-size: 32px;
+  text-align: center;
+}
