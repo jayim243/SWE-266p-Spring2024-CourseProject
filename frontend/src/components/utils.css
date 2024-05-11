@@ -1,0 +1,37 @@
+.input-title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.input-wrapper {
+  margin: 28px 0;
+}
+
+.bottom-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  width: 40%;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.btn-primary {
+  background: #454ff8;
+}
+
+.btn-secondary {
+  background: #8c8c8c;
+}

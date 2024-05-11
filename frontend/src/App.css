@@ -1,0 +1,22 @@
+h1 {
+  text-align: center;
+}
+
+.authentication-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.authentication-wrapper {
+  width: 40%;
+  margin: 5rem;
+  padding: 2.5rem;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.authentication-title {
+  margin: 20px 0;
+  font-size: 32px;
+}
