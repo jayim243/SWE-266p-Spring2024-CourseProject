@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, InputField } from "./utils";
+import { Button, InputField, decimal_test } from "./utils";
 import BankPanel from "./BankPanel";
 
 const Bank = ({ setLogin }) => {
@@ -13,6 +13,22 @@ const Bank = ({ setLogin }) => {
   const onChangeDeposit = (ev) => {
     setDeposit(ev.target.value);
   };
+  const onDeposit = () => {
+    if (decimal_test(deposit)) {
+      alert("Deposited!");
+    }
+    else {
+      alert("invalid deposit value")
+    }
+  }
+  const onWithdraw = () => {
+    if (decimal_test(withdraw)) {
+      alert("withdrew!");
+    }
+    else {
+      alert("invalid withdrawal value")
+    }
+  }
 
   const DEPOSIT_PANEL = {
     title: "Deposit",
@@ -29,9 +45,7 @@ const Bank = ({ setLogin }) => {
       <Button
         type="primary"
         caption="Deposit"
-        onClick={() => {
-          alert("Deposited!");
-        }}
+        onClick={onDeposit}
       />
     ),
   };
@@ -51,9 +65,7 @@ const Bank = ({ setLogin }) => {
       <Button
         type="primary"
         caption="Withdraw"
-        onClick={() => {
-          alert("Withdrew!");
-        }}
+        onClick={onWithdraw}
       />
     ),
   };

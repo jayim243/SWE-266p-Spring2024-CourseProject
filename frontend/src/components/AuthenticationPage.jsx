@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Button, InputField } from "./utils";
+import { Button, InputField, decimal_test } from "./utils";
 import AuthenticationPanel from "./AuthenticationPanel";
 
 const AuthenticationPage = ({ setLogin }) => {
@@ -12,6 +12,20 @@ const AuthenticationPage = ({ setLogin }) => {
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [initialBalance, setInitialBalance] = useState("");
+  const [error, setError] = useState("");
+
+  const validateUsernameAndPassword = (value) => {
+    const accountRegex = /^[_\-.0-9a-z]{1,127}$/;
+    return accountRegex.test(value);
+  };
+
+  const validateInitialBalance = (value) => {
+    const balanceRegex = /^(0|[1-9][0-9]*)\.[0-9]{2}$/;
+    const maxValue = 4294967295.99;
+    return balanceRegex.test(value) && parseFloat(value) <= maxValue;
+  };
+
+
 
   const onUsernameChange = (ev) => {
     setUsername(ev.target.value);
@@ -33,9 +47,34 @@ const AuthenticationPage = ({ setLogin }) => {
     setInitialBalance(ev.target.value);
   };
 
+  const handleLoginSubmit = () => {
+    if (!validateUsernameAndPassword(username) || !validateUsernameAndPassword(password)) {
+      setError("invalid_input");
+    } else {
+      setError("");
+      setLogin(true);
+    }
+  };
+
+  const handleSignupSubmit = () => {
+    if (!validateUsernameAndPassword(newUsername) || !validateUsernameAndPassword(newPassword)) {
+      setError("invalid_input");
+    }
+    else if (!validateInitialBalance(initialBalance)) {
+      if (!decimal_test(initialBalance)) {
+        setError("number must be positive and specify 2 decimal places");
+      }
+    }
+    else {
+      setError("");
+      alert("You Have been Registered");
+      setLoginPage(true);
+    }
+  };
+
   const LOGIN_PAGE = {
     title: "Welcome to the most secure bank app",
-    leftButton: <Button type="primary" caption="Login" onClick={setLogin} />,
+    leftButton: <Button type="primary" caption="Login" onClick={handleLoginSubmit} />,
     rightButton: (
       <Button
         type="secondary"
@@ -73,9 +112,7 @@ const AuthenticationPage = ({ setLogin }) => {
       <Button
         type="primary"
         caption="Signup"
-        onClick={() => {
-          alert("Signup");
-        }}
+        onClick={handleSignupSubmit}
       />
     ),
     rightButton: (
@@ -124,6 +161,7 @@ const AuthenticationPage = ({ setLogin }) => {
       ) : (
         <AuthenticationPanel {...SIGNUP_PAGE} />
       )}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
     </div>
   );
 };

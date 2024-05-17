@@ -4,6 +4,9 @@ const AuthenticationTitle = ({ title }) => (
   <p className="authentication-title">{title}</p>
 );
 
+const decimal_test = x => !isNaN(+x) && Boolean(x.match(/\...$/) && x > 0);
+
+
 const Button = ({ type, caption, onClick }) => (
   <button className={`btn-${type}`} onClick={onClick}>
     {caption}
@@ -38,4 +41,4 @@ const Callout = ({ text, visible = true, type }) => {
   return <></>;
 };
 
-export { AuthenticationTitle, Button, Callout, InputField };
+export { AuthenticationTitle, Button, Callout, InputField, decimal_test };
