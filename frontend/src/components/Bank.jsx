@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, InputField, decimal_test } from "./utils";
 import BankPanel from "./BankPanel";
 
 const Bank = ({ setLogin }) => {
+  const [balance, setBalance] = useState("");
   const [deposit, setDeposit] = useState("");
   const [withdraw, setWithdraw] = useState("");
 
@@ -13,15 +14,47 @@ const Bank = ({ setLogin }) => {
   const onChangeDeposit = (ev) => {
     setDeposit(ev.target.value);
   };
+
   const onDeposit = () => {
     if (decimal_test(deposit)) {
+      fetch("http://localhost:3001/deposit", {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("username")}`,
+        },
+        body: JSON.stringify({
+          amount: deposit,
+        }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res);
+        });
+
       alert("Deposited!");
     } else {
       alert("invalid deposit value");
     }
   };
+
   const onWithdraw = () => {
     if (decimal_test(withdraw)) {
+      fetch("http://localhost:3001/withdraw", {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("username")}`,
+        },
+        body: JSON.stringify({
+          amount: withdraw,
+        }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res);
+        });
+
       alert("withdrew!");
     } else {
       alert("invalid withdrawal value");
@@ -56,9 +89,25 @@ const Bank = ({ setLogin }) => {
     button: <Button type="primary" caption="Withdraw" onClick={onWithdraw} />,
   };
 
+  useEffect(() => {
+    fetch("http://localhost:3001/balance", {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+      });
+  }, [balance]);
+
   return (
     <div className="bank">
-      <p>Welcome {"{username}"}</p>
+      <p>
+        Welcome <b>{localStorage.getItem("username")}</b>
+      </p>
       <p className="balance">Your current balance: $69</p>
 
       <div className="panel-wrapper">
