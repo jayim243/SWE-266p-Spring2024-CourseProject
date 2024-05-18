@@ -3,7 +3,7 @@ import { Button, InputField, decimal_test } from "./utils";
 import BankPanel from "./BankPanel";
 
 const Bank = ({ setLogin }) => {
-  const [balance, setBalance] = useState("");
+  const [balance, setBalance] = useState(null);
   const [deposit, setDeposit] = useState("");
   const [withdraw, setWithdraw] = useState("");
 
@@ -22,14 +22,16 @@ const Bank = ({ setLogin }) => {
         method: "POST",
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          balance: deposit,
+          amount: deposit,
         }),
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
+          setBalance(res.balance);
+          setDeposit("");
         })
         .catch((err) => {
           console.log(err);
@@ -46,14 +48,16 @@ const Bank = ({ setLogin }) => {
         method: "POST",
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          balance: withdraw,
+          amount: withdraw,
         }),
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
+          setBalance(res.balance);
+          setWithdraw("");
         });
 
       alert("withdrew!");
@@ -121,6 +125,8 @@ const Bank = ({ setLogin }) => {
         caption="Logout"
         onClick={() => {
           setLogin(false);
+          localStorage.setItem("username", null);
+          localStorage.setItem("token", null);
         }}
       />
     </div>

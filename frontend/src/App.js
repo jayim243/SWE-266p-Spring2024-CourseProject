@@ -4,7 +4,7 @@ import AuthenticationPage from "./components/AuthenticationPage";
 import "./App.css";
 
 const App = () => {
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   return (
     <div className="App">
