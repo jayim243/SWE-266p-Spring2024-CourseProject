@@ -53,7 +53,31 @@ const AuthenticationPage = ({ setLogin }) => {
       setError("invalid_input");
     } else {
       setError("");
-      setLogin(true);
+      fetch("http://localhost:3001/login", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.token) {
+            localStorage.setItem("token", res.token);
+            localStorage.setItem("username", username);
+
+            setError("");
+            setLogin(true);
+            alert("Logged in");
+          } else {
+            setError(res.error);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
@@ -71,17 +95,29 @@ const AuthenticationPage = ({ setLogin }) => {
       fetch("http://localhost:3001/register", {
         method: "POST",
         mode: "cors",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: newUsername, password: newPassword }),
       })
+        .then((res) => res.json())
         .then((res) => {
-          console.log(res.json());
+          if (res.token) {
+            console.log(res);
+            localStorage.setItem("token", res.token);
+            localStorage.setItem("username", newUsername);
+
+            setError("");
+            alert("You Have been Registered");
+            setLogin(true);
+          } else {
+            setError(res.error);
+          }
         })
         .catch((err) => {
-          console.log(err.message);
+          console.log(err);
         });
-
-      setError("");
-      alert("You Have been Registered");
-      setLoginPage(true);
     }
   };
 
@@ -96,6 +132,7 @@ const AuthenticationPage = ({ setLogin }) => {
         caption="Signup"
         onClick={() => {
           setLoginPage(false);
+          setError("");
         }}
       />
     ),
@@ -132,6 +169,7 @@ const AuthenticationPage = ({ setLogin }) => {
         caption="Already have Account?"
         onClick={() => {
           setLoginPage(true);
+          setError("");
         }}
       />
     ),
