@@ -57,7 +57,7 @@ const AuthenticationPage = ({ setLogin }) => {
     }
   };
 
-  const handleSignupSubmit = () => {
+  const handleSignupSubmit = async () => {
     if (
       !validateUsernameAndPassword(newUsername) ||
       !validateUsernameAndPassword(newPassword)
@@ -68,6 +68,17 @@ const AuthenticationPage = ({ setLogin }) => {
         setError("number must be positive and specify 2 decimal places");
       }
     } else {
+      fetch("http://localhost:3001/register", {
+        method: "POST",
+        mode: "cors",
+      })
+        .then((res) => {
+          console.log(res.json());
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+
       setError("");
       alert("You Have been Registered");
       setLoginPage(true);
