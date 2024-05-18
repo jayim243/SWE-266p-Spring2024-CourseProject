@@ -16,19 +16,17 @@ const Bank = ({ setLogin }) => {
   const onDeposit = () => {
     if (decimal_test(deposit)) {
       alert("Deposited!");
+    } else {
+      alert("invalid deposit value");
     }
-    else {
-      alert("invalid deposit value")
-    }
-  }
+  };
   const onWithdraw = () => {
     if (decimal_test(withdraw)) {
       alert("withdrew!");
+    } else {
+      alert("invalid withdrawal value");
     }
-    else {
-      alert("invalid withdrawal value")
-    }
-  }
+  };
 
   const DEPOSIT_PANEL = {
     title: "Deposit",
@@ -41,13 +39,7 @@ const Bank = ({ setLogin }) => {
         onChage={onChangeDeposit}
       />
     ),
-    button: (
-      <Button
-        type="primary"
-        caption="Deposit"
-        onClick={onDeposit}
-      />
-    ),
+    button: <Button type="primary" caption="Deposit" onClick={onDeposit} />,
   };
 
   const WITHDRAWAL_PANEL = {
@@ -61,13 +53,7 @@ const Bank = ({ setLogin }) => {
         onChage={onChangeWithdraw}
       />
     ),
-    button: (
-      <Button
-        type="primary"
-        caption="Withdraw"
-        onClick={onWithdraw}
-      />
-    ),
+    button: <Button type="primary" caption="Withdraw" onClick={onWithdraw} />,
   };
 
   return (

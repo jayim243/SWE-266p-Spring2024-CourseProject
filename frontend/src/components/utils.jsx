@@ -4,8 +4,7 @@ const AuthenticationTitle = ({ title }) => (
   <p className="authentication-title">{title}</p>
 );
 
-const decimal_test = x => !isNaN(+x) && Boolean(x.match(/\...$/) && x > 0);
-
+const decimal_test = (x) => !isNaN(+x) && Boolean(x.match(/\...$/) && x > 0);
 
 const Button = ({ type, caption, onClick }) => (
   <button className={`btn-${type}`} onClick={onClick}>

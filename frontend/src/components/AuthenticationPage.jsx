@@ -25,8 +25,6 @@ const AuthenticationPage = ({ setLogin }) => {
     return balanceRegex.test(value) && parseFloat(value) <= maxValue;
   };
 
-
-
   const onUsernameChange = (ev) => {
     setUsername(ev.target.value);
   };
@@ -48,7 +46,10 @@ const AuthenticationPage = ({ setLogin }) => {
   };
 
   const handleLoginSubmit = () => {
-    if (!validateUsernameAndPassword(username) || !validateUsernameAndPassword(password)) {
+    if (
+      !validateUsernameAndPassword(username) ||
+      !validateUsernameAndPassword(password)
+    ) {
       setError("invalid_input");
     } else {
       setError("");
@@ -57,15 +58,16 @@ const AuthenticationPage = ({ setLogin }) => {
   };
 
   const handleSignupSubmit = () => {
-    if (!validateUsernameAndPassword(newUsername) || !validateUsernameAndPassword(newPassword)) {
+    if (
+      !validateUsernameAndPassword(newUsername) ||
+      !validateUsernameAndPassword(newPassword)
+    ) {
       setError("invalid_input");
-    }
-    else if (!validateInitialBalance(initialBalance)) {
+    } else if (!validateInitialBalance(initialBalance)) {
       if (!decimal_test(initialBalance)) {
         setError("number must be positive and specify 2 decimal places");
       }
-    }
-    else {
+    } else {
       setError("");
       alert("You Have been Registered");
       setLoginPage(true);
@@ -74,7 +76,9 @@ const AuthenticationPage = ({ setLogin }) => {
 
   const LOGIN_PAGE = {
     title: "Welcome to the most secure bank app",
-    leftButton: <Button type="primary" caption="Login" onClick={handleLoginSubmit} />,
+    leftButton: (
+      <Button type="primary" caption="Login" onClick={handleLoginSubmit} />
+    ),
     rightButton: (
       <Button
         type="secondary"
@@ -109,11 +113,7 @@ const AuthenticationPage = ({ setLogin }) => {
   const SIGNUP_PAGE = {
     title: "Signup",
     leftButton: (
-      <Button
-        type="primary"
-        caption="Signup"
-        onClick={handleSignupSubmit}
-      />
+      <Button type="primary" caption="Signup" onClick={handleSignupSubmit} />
     ),
     rightButton: (
       <Button
@@ -161,7 +161,7 @@ const AuthenticationPage = ({ setLogin }) => {
       ) : (
         <AuthenticationPanel {...SIGNUP_PAGE} />
       )}
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {error && <div style={{ color: "red" }}>{error}</div>}
     </div>
   );
 };
