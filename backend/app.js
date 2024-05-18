@@ -105,7 +105,17 @@ app.post("/deposit", authenticateToken, (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      res.json({ message: "Deposit successful", amount });
+      // Retrieve the updated balance
+      db.get(
+        "SELECT balance FROM accounts WHERE userid = ?",
+        [userid],
+        (err, row) => {
+          if (err) {
+            return res.status(500).json({ error: err.message });
+          }
+          res.json({ message: "Deposit successful", balance: row.balance });
+        }
+      );
     }
   );
 });
@@ -142,7 +152,21 @@ app.post("/withdraw", authenticateToken, (req, res) => {
           if (err) {
             return res.status(500).json({ error: err.message });
           }
-          res.json({ message: "Withdrawal successful", amount });
+
+          // Retrieve the updated balance
+          db.get(
+            "SELECT balance FROM accounts WHERE userid = ?",
+            [userid],
+            (err, row) => {
+              if (err) {
+                return res.status(500).json({ error: err.message });
+              }
+              res.json({
+                message: "Withdrawal successful",
+                balance: row.balance,
+              });
+            }
+          );
         }
       );
     }
