@@ -21,18 +21,19 @@ const Bank = ({ setLogin }) => {
         mode: "cors",
         method: "POST",
         headers: {
-          authorization: `Bearer ${localStorage.getItem("username")}`,
+          authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          amount: deposit,
+          balance: deposit,
         }),
       })
         .then((res) => res.json())
         .then((res) => {
           console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
         });
-
-      alert("Deposited!");
     } else {
       alert("invalid deposit value");
     }
@@ -44,10 +45,10 @@ const Bank = ({ setLogin }) => {
         mode: "cors",
         method: "POST",
         headers: {
-          authorization: `Bearer ${localStorage.getItem("username")}`,
+          authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          amount: withdraw,
+          balance: withdraw,
         }),
       })
         .then((res) => res.json())
@@ -99,7 +100,7 @@ const Bank = ({ setLogin }) => {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
+        setBalance(res.balance);
       });
   }, [balance]);
 
@@ -108,7 +109,7 @@ const Bank = ({ setLogin }) => {
       <p>
         Welcome <b>{localStorage.getItem("username")}</b>
       </p>
-      <p className="balance">Your current balance: $69</p>
+      <p className="balance">Your current balance: {balance}</p>
 
       <div className="panel-wrapper">
         <BankPanel {...DEPOSIT_PANEL} />
