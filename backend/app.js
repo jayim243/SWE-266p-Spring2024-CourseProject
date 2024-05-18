@@ -15,29 +15,27 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 
-
 // JWT middleware for authentication
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN_VALUE
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN_VALUE
 
   if (token == null) return res.sendStatus(401); // if no token, return unauthorized
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
-      if (err) return res.sendStatus(403); // if token is not valid, return forbidden
-      req.user = user;
-      next();
+    if (err) return res.sendStatus(403); // if token is not valid, return forbidden
+    req.user = user;
+    next();
   });
 };
 
-
 // Register User
 app.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, balance } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   db.run(
-    `INSERT INTO accounts (username, password) VALUES (?, ?)`,
-    [username, hashedPassword],
+    `INSERT INTO accounts (username, password, balance) VALUES (?, ?, ?)`,
+    [username, hashedPassword, balance],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -73,67 +71,80 @@ app.post("/login", (req, res) => {
   );
 });
 
-
 // Balance checking
-app.get('/balance', authenticateToken, (req, res) => {
+app.get("/balance", authenticateToken, (req, res) => {
   const userid = req.user.userid;
-  db.get('SELECT balance FROM accounts WHERE userid = ?', [userid], (err, row) => {
+  db.get(
+    "SELECT balance FROM accounts WHERE userid = ?",
+    [userid],
+    (err, row) => {
       if (err) {
-          return res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
       }
       if (!row) {
-          return res.status(404).json({ error: 'Account not found' });
+        return res.status(404).json({ error: "Account not found" });
       }
       res.json({ balance: row.balance });
-  });
+    }
+  );
 });
-
 
 // Deposit
-app.post('/deposit', authenticateToken, (req, res) => {
+app.post("/deposit", authenticateToken, (req, res) => {
   const userid = req.user.userid;
   const amount = req.body.amount;
 
   if (amount <= 0) {
-      return res.status(400).json({ error: 'Deposit amount must be positive' });
+    return res.status(400).json({ error: "Deposit amount must be positive" });
   }
 
-  db.run('UPDATE accounts SET balance = balance + ? WHERE userid = ?', [amount, userid], function(err) {
+  db.run(
+    "UPDATE accounts SET balance = balance + ? WHERE userid = ?",
+    [amount, userid],
+    function (err) {
       if (err) {
-          return res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
       }
-      res.json({ message: 'Deposit successful', amount });
-  });
+      res.json({ message: "Deposit successful", amount });
+    }
+  );
 });
-
 
 // Withdrawal
-app.post('/withdraw', authenticateToken, (req, res) => {
+app.post("/withdraw", authenticateToken, (req, res) => {
   const userid = req.user.userid;
   const amount = req.body.amount;
 
   if (amount <= 0) {
-      return res.status(400).json({ error: 'Withdrawal amount must be positive' });
+    return res
+      .status(400)
+      .json({ error: "Withdrawal amount must be positive" });
   }
 
-  db.get('SELECT balance FROM accounts WHERE userid = ?', [userid], (err, row) => {
+  db.get(
+    "SELECT balance FROM accounts WHERE userid = ?",
+    [userid],
+    (err, row) => {
       if (err) {
-          return res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
       }
       if (!row) {
-          return res.status(404).json({ error: 'Account not found' });
+        return res.status(404).json({ error: "Account not found" });
       }
       if (row.balance < amount) {
-          return res.status(400).json({ error: 'Insufficient funds' });
+        return res.status(400).json({ error: "Insufficient funds" });
       }
 
-      db.run('UPDATE accounts SET balance = balance - ? WHERE userid = ?', [amount, userid], function(err) {
+      db.run(
+        "UPDATE accounts SET balance = balance - ? WHERE userid = ?",
+        [amount, userid],
+        function (err) {
           if (err) {
-              return res.status(500).json({ error: err.message });
+            return res.status(500).json({ error: err.message });
           }
-          res.json({ message: 'Withdrawal successful', amount });
-      });
-  });
+          res.json({ message: "Withdrawal successful", amount });
+        }
+      );
+    }
+  );
 });
-
-
