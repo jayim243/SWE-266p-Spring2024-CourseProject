@@ -110,6 +110,19 @@ const AuthenticationPage = ({ setLogin }) => {
 
             setError("");
             alert("You Have been Registered");
+
+            fetch("http://localhost:3001/deposit", {
+              method: "POST",
+              mode: "cors",
+              headers: {
+                authorization: `Bearer ${res.token}`,
+              },
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                console.log(res);
+              });
+
             setLogin(true);
           } else {
             setError(res.error);
