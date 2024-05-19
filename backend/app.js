@@ -38,9 +38,12 @@ app.post("/register", async (req, res) => {
     [username, hashedPassword, balance],
     function (err) {
       if (err) {
-        return res.status(500).json({ error: err.message });
+        if (err.code == 'SQLITE_CONSTRAINT') {
+          return res.status(500).json({ error: "Invalid Input" });
+        } else {
+          return res.status(500).json({ error: "An Unknown Error has occured" });
+        }
       }
-      console.log(username, password);
       const token = jwt.sign({ userid: this.lastID }, JWT_SECRET, {
         expiresIn: "24h",
       });
