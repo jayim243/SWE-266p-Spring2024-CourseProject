@@ -4,7 +4,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("./database");
 
-const JWT_SECRET = "secret";
+//Weak or Static JWT Secret for broken authentication vulnerability
+const JWT_SECRET = "password";
 
 const app = express();
 // app.use(cors()); // Allows requests from all domains
@@ -41,7 +42,7 @@ app.post("/register", async (req, res) => {
         return res.status(500).json({ error: err.message });
       }
       console.log(username, password);
-      const token = jwt.sign({ userid: this.lastID }, JWT_SECRET, {
+      const token = jwt.sign({ userid: user.userid }, JWT_SECRET, {
         expiresIn: "24h",
       });
       res.status(201).json({ token, userid: this.lastID });
@@ -170,3 +171,19 @@ app.post("/withdraw", authenticateToken, (req, res) => {
     }
   );
 });
+
+//IDOR (Insecure Direct Object References) vulnerability
+app.get('/user/:id', authenticateToken, (req, res) => {
+  const userId = req.params.id; // Directly using user input
+
+  db.get(`SELECT * FROM users WHERE id = ${userId}`, (err, result) => {
+    if (err) {
+      res.status(500).send('Server error');
+    } else if (result) {
+      res.json(result);
+    } else {
+      res.status(404).send('User not found');
+    }
+  });
+});
+
