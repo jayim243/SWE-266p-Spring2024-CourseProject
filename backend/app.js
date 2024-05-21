@@ -7,8 +7,15 @@ const db = require("./database");
 const JWT_SECRET = "secret";
 
 const app = express();
-// app.use(cors()); // Allows requests from all domains
+
 app.use(express.json()); // Parses JSON-formatted request bodies
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

@@ -51,34 +51,34 @@ const AuthenticationPage = ({ setLogin }) => {
       !validateUsernameAndPassword(password)
     ) {
       setError("invalid_input");
-    } else {
-      setError("");
-      fetch("http://localhost:3001/login", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          if (res.token) {
-            localStorage.setItem("token", res.token);
-            localStorage.setItem("username", username);
+    } 
+    else{setError("");}
+    fetch("http://localhost:3001/login", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.token) {
+          localStorage.setItem("token", res.token);
+          localStorage.setItem("username", username);
 
-            setError("");
-            setLogin(true);
-            alert("Logged in");
-          } else {
-            setError(res.error);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+          setError("");
+          setLogin(true);
+          alert("Logged in");
+        } else {
+          setError(res.error);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    
   };
 
   const handleSignupSubmit = async () => {
