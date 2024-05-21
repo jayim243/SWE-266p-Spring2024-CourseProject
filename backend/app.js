@@ -8,7 +8,7 @@ const db = require("./database");
 const JWT_SECRET = "password";
 
 const app = express();
-// app.use(cors()); // Allows requests from all domains
+app.use(cors()); // Allows requests from all domains
 app.use(express.json()); // Parses JSON-formatted request bodies
 
 const PORT = process.env.PORT || 3001;
