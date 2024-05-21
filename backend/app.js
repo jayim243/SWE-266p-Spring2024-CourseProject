@@ -47,7 +47,7 @@ app.post("/register", async (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      console.log(username, password);
+
       const token = jwt.sign({ userid: this.lastID }, JWT_SECRET, {
         expiresIn: "24h",
       });
