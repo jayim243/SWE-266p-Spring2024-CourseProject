@@ -32,6 +32,7 @@ const Bank = ({ setLogin }) => {
         .then((res) => {
           setBalance(res.balance);
           setDeposit("");
+          alert("Deposited!");
         })
         .catch((err) => {
           console.log(err);
@@ -58,9 +59,8 @@ const Bank = ({ setLogin }) => {
         .then((res) => {
           setBalance(res.balance);
           setWithdraw("");
+          alert("withdrew!");
         });
-
-      alert("withdrew!");
     } else {
       alert("invalid withdrawal value");
     }
