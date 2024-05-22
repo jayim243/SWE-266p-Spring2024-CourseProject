@@ -10,6 +10,15 @@ const db = new sqlite3.Database(
       throw err;
     }
     console.log("Connected to the bank database.");
+
+    // Set overly permissive file permissions (simulated as a bad practice)
+    fs.chmod('./bank.db', 0o666, (err) => {
+      if (err) {
+        console.error("Failed to set permissive file permissions:", err);
+      } else {
+        console.log("Database file permissions set to overly permissive");
+      }
+    });
   }
 );
 
