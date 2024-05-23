@@ -1,4 +1,5 @@
 const sqlite3 = require("sqlite3").verbose();
+const fs = require("fs");
 
 // Connect to the SQLite database in memory
 const db = new sqlite3.Database(
