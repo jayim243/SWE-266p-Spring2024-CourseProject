@@ -115,7 +115,7 @@ const Bank = ({ setLogin }) => {
       <p>
         Welcome <b>{localStorage.getItem("username")}</b>
       </p>
-      <p className="balance">Your current balance: {balance}</p>
+      <p className="balance">Your current balance: {balance?.toFixed(2)}</p>
 
       <div className="panel-wrapper">
         <BankPanel {...DEPOSIT_PANEL} />
