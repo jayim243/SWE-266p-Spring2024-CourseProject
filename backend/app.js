@@ -3,14 +3,22 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("./database");
+require('dotenv').config();
 
-const JWT_SECRET = "secret";
+const JWT_SECRET = process.env.JWT_SECRET;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 app.use(cors()); // Allows requests from all domains
 app.use(express.json()); // Parses JSON-formatted request bodies
 
-const PORT = process.env.PORT || 3001;
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
@@ -27,6 +35,11 @@ const authenticateToken = (req, res, next) => {
     req.user = user;
     next();
   });
+};
+
+const isPasswordStrong = (password) => {
+  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  return strongPasswordRegex.test(password);
 };
 
 // Register User
