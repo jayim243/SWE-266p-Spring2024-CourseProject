@@ -4,7 +4,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("./database");
 
-const JWT_SECRET = "secret";
+//Weak or Static JWT Secret for broken authentication vulnerability
+const JWT_SECRET = "password";
 
 const app = express();
 app.use(cors()); // Allows requests from all domains
@@ -33,10 +34,10 @@ const authenticateToken = (req, res, next) => {
 app.post("/register", async (req, res) => {
   const { username, password, balance } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
-  db.run(
-    `INSERT INTO accounts (username, password, balance) VALUES (?, ?, ?)`,
-    [username, hashedPassword, balance],
-    function (err) {
+
+  const query = `INSERT INTO accounts (username, password, balance) VALUES ('${username}', '${hashedPassword}', '${balance}')`;
+
+  db.run(query, function (err) {
       if (err) {
         if (err.code == 'SQLITE_CONSTRAINT') {
           return res.status(500).json({ error: "Invalid Input" });
@@ -44,7 +45,7 @@ app.post("/register", async (req, res) => {
           return res.status(500).json({ error: "An Unknown Error has occured" });
         }
       }
-      const token = jwt.sign({ userid: this.lastID }, JWT_SECRET, {
+      const token = jwt.sign({ userid: user.userid }, JWT_SECRET, {
         expiresIn: "24h",
       });
       res.status(201).json({ token, userid: this.lastID });
@@ -55,10 +56,10 @@ app.post("/register", async (req, res) => {
 // Login User
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
-  db.get(
-    `SELECT * FROM accounts WHERE username = ?`,
-    [username],
-    async (err, user) => {
+
+  const query = `SELECT * FROM accounts WHERE username = '${username}'`;
+
+  db.get(query, async (err, user) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
@@ -77,10 +78,11 @@ app.post("/login", (req, res) => {
 // Balance checking
 app.get("/balance", authenticateToken, (req, res) => {
   const userid = req.user.userid;
-  db.get(
-    "SELECT balance FROM accounts WHERE userid = ?",
-    [userid],
-    (err, row) => {
+
+  const query = `SELECT balance FROM accounts WHERE userid = '${userid}'`;
+
+
+  db.get(query, (err, row) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
@@ -101,18 +103,17 @@ app.post("/deposit", authenticateToken, (req, res) => {
     return res.status(400).json({ error: "Deposit amount must be positive" });
   }
 
-  db.run(
-    "UPDATE accounts SET balance = balance + ? WHERE userid = ?",
-    [amount, userid],
-    function (err) {
+  const query = `UPDATE accounts SET balance = balance + ${amount} WHERE userid = '${userid}'`;
+
+  db.run(query, function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
       // Retrieve the updated balance
-      db.get(
-        "SELECT balance FROM accounts WHERE userid = ?",
-        [userid],
-        (err, row) => {
+
+    const query2 = `SELECT balance FROM accounts WHERE userid = '${userid}'`;
+
+    db.get(query2, (err, row) => {
           if (err) {
             return res.status(500).json({ error: err.message });
           }
@@ -133,11 +134,9 @@ app.post("/withdraw", authenticateToken, (req, res) => {
       .status(400)
       .json({ error: "Withdrawal amount must be positive" });
   }
+  const query = `SELECT balance FROM accounts WHERE userid = '${userid}'`;
 
-  db.get(
-    "SELECT balance FROM accounts WHERE userid = ?",
-    [userid],
-    (err, row) => {
+  db.get(query, (err, row) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
@@ -175,3 +174,19 @@ app.post("/withdraw", authenticateToken, (req, res) => {
     }
   );
 });
+
+//IDOR (Insecure Direct Object References) vulnerability
+app.get('/user/:id', authenticateToken, (req, res) => {
+  const userId = req.params.id; // Directly using user input
+
+  db.get(`SELECT * FROM users WHERE id = ${userId}`, (err, result) => {
+    if (err) {
+      res.status(500).send('Server error');
+    } else if (result) {
+      res.json(result);
+    } else {
+      res.status(404).send('User not found');
+    }
+  });
+});
+
