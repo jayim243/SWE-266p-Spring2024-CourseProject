@@ -56,11 +56,13 @@ const Bank = ({ setLogin }) => {
       })
         .then((res) => res.json())
         .then((res) => {
-          setBalance(res.balance);
-          setWithdraw("");
+          if (res.error) alert(res.error);
+          else {
+            setBalance(res.balance);
+            setWithdraw("");
+            alert("withdrew!");
+          }
         });
-
-      alert("withdrew!");
     } else {
       alert("invalid withdrawal value");
     }
