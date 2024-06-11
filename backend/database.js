@@ -7,7 +7,7 @@ const db = new sqlite3.Database(
   (err) => {
     if (err) {
       console.error(err.message);
-      throw err;
+      throw new Error(`Database connection failed: ${err.message}`);;
     }
     console.log("Connected to the bank database.");
   }
